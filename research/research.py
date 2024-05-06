@@ -1,19 +1,14 @@
 import base64
 import json
 import random
-import re
 import requests
 import sys
-import urllib
-
-from fuzzysearch import find_near_matches
 
 CLIENT_ID = "764025cb6d2d4e829cea0cb06179e956"
 CLIENT_SECRET = "4bd9ec038c554ceb8b637018f068a040"
 
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_URL = "https://api.spotify.com/v1"
-
 
 def get_token():
     client_token = base64.b64encode("{}:{}".format(CLIENT_ID, CLIENT_SECRET).encode('UTF-8')).decode('ascii')
