@@ -45,6 +45,7 @@ def request_valid_song(access_token, genre=None):
                 headers = authorization_header
             )
             song_info = random.choice(json.loads(song_request.text)['tracks']['items'])
+            song_uri = 'https://scannables.scdn.co/uri/plain/jpeg/000000/white/640/'+song_info['uri']
             artist = song_info['artists'][0]['name']
             song = song_info['name']
             break
@@ -56,7 +57,7 @@ def request_valid_song(access_token, genre=None):
         artist = "Rick Astley"
         song = "Never Gonna Give You Up"
         
-    return "{} - {}".format(artist, song)
+    return "{} - {} \n{}".format(artist, song, song_uri)
 
 
 def main():
@@ -73,3 +74,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# https://scannables.scdn.co/uri/plain/jpeg/000000/white/640/
