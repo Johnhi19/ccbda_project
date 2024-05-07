@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify
-from spotify_script import get_token, request_valid_song  # Ensure your script is named spotify_script.py
+from research.spotify_script import get_token, request_valid_song  # Ensure your script is named spotify_script.py
 
 app = Flask(__name__)
 
