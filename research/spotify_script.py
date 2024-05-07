@@ -8,6 +8,7 @@ CLIENT_SECRET = "4bd9ec038c554ceb8b637018f068a040"
 
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_URL = "https://api.spotify.com/v1"
+SPOTIFY_CODE_BASE_URL = "https://scannables.scdn.co/uri/plain/jpeg/000000/white/640/"
 
 
 def get_token():
@@ -34,7 +35,7 @@ def request_valid_song(access_token):
                 headers=authorization_header
             )
             song_info = random.choice(json.loads(song_request.text)['tracks']['items'])
-            song_uri = 'https://scannables.scdn.co/uri/plain/jpeg/000000/white/640/' + song_info['uri']
+            song_uri =  SPOTIFY_CODE_BASE_URL + song_info['uri']
             artist = song_info['artists'][0]['name']
             song = song_info['name']
             return f"{artist} - {song} <img src='{song_uri}'/>"
