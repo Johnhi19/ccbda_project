@@ -1,5 +1,6 @@
 # Research topic: Spotify Integrated App
 The idea is to have a website with which you get a random song name with its artist and spotify code. The spotify codes look like this:
+
 ![Image](pictures/spotifycode.png)
 
 You can try to scan the code with your spotify app (Go to the search bar and click on the camera symbol). We will be using the Spotify API for getting the random song and for the deployment we will use AWS Elastic Beanstalk. 
