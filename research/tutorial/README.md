@@ -72,3 +72,5 @@ You can play around a bit by clicking on the get song button.
 This is how the website looks after clicking on the get song button:
 
 ![Image](pictures/website2.png)
+
+In the end don't forget to terminate your environment and also the spotify app.
