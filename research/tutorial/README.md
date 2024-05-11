@@ -50,7 +50,10 @@ You can open the web app locally on the following IP address http://127.0.0.1:80
 You can play around a bit by clicking on the get song button.
 
 ## Deploy your application with AWS Beanstalk
-1. Zip the folder
+1. Zip the folder of the code. You can either use the UI or the command line. But make sure that everything is included (your virtual environment is not necessary). Use the following command in linux to zip your folder (maybe you have to replace venv with the name of your virtual environment):
+```
+zip -r application.zip ./ -x "/venv/*"
+```
 2. Start your learners lab and go to the Elastic Beanstalk console
 3. Go to Applications > Create application
 4. as the name choose ```research-ccbda``` and click create
