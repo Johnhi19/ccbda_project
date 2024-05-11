@@ -57,7 +57,7 @@ zip -r application.zip ./ -x "/venv/*"
 2. Start your learners lab and go to the Elastic Beanstalk console
 3. Go to Applications > Create application
 4. as the name choose ```research-ccbda``` and click create
-5. Go to Environments > Create environment
+5. In your application choose create environment
 6. Configure the environment
 - For the name use ```research```
 - Platform is Python 3.11
