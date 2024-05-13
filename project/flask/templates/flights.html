@@ -1,21 +1,61 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Flights on {{ date }}</title>
+    <title>Flight Information</title>
   </head>
   <body>
-    <h1>Flights on {{ date }}</h1>
+    <h1>Flight Details for {{ date }}</h1>
     {% if flight_info %}
-    <ul>
-      {% for flight in flight_info %}
-      <li>
-        Flight Number: {{ flight.flight_number }}, Destination: {{
-        flight.destination }}, Time: {{ flight.time }}
-      </li>
+    <div>
+      <p>Total Results: {{ flight_info.data.context.totalResults }}</p>
+      {% for itinerary in flight_info.data.itineraries %}
+      <div>
+        <h2>Itinerary ID: {{ itinerary.id }}</h2>
+        <p>Price: {{ itinerary.price.formatted }}</p>
+        <div>
+          <h3>Legs:</h3>
+          {% for leg in itinerary.legs %}
+          <div>
+            <p>Leg ID: {{ leg.id }}</p>
+            <p>
+              From {{ leg.origin.name }} ({{ leg.origin.displayCode }}) to {{
+              leg.destination.name }} ({{ leg.destination.displayCode }})
+            </p>
+            <p>Departure: {{ leg.departure }}</p>
+            <p>Arrival: {{ leg.arrival }}</p>
+            <p>Duration: {{ leg.durationInMinutes }} minutes</p>
+            <p>Stops: {{ leg.stopCount }}</p>
+            <h4>Carriers:</h4>
+            {% for carrier in leg.carriers.marketing %}
+            <p>
+              {{ carrier.name }} -
+              <img src="{{ carrier.logoUrl }}" alt="Carrier Logo" />
+            </p>
+            {% endfor %}
+            <h4>Segments:</h4>
+            {% for segment in leg.segments %}
+            <div>
+              <p>Segment ID: {{ segment.id }}</p>
+              <p>Flight Number: {{ segment.flightNumber }}</p>
+              <p>
+                From {{ segment.origin.name }} ({{ segment.origin.displayCode
+                }}) to {{ segment.destination.name }} ({{
+                segment.destination.displayCode }})
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+        <p>
+          Fare Policy: Cancellation Allowed? {{
+          itinerary.farePolicy.isCancellationAllowed }}
+        </p>
+      </div>
       {% endfor %}
-    </ul>
+    </div>
     {% else %}
-    <p>No flights available for this date.</p>
+    <p>No flight information available for this date.</p>
     {% endif %}
     <a href="/">Back</a>
     <a href="/logout">Logout</a>

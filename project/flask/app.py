@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import boto3
+import json
 
 def send_email_via_sns():
     sns = boto3.client('sns', region_name='us-east-1')
@@ -54,6 +55,16 @@ def register():
         else:
             return 'Username already exists'
     return render_template('register.html')
+
+@app.route('/submit_date', methods=['POST'])
+def submit_date():
+    date = request.form['date']
+    f = open('../flight_results.json')
+ 
+    flight_info = json.load(f)
+    #flight_info = fetch_flights_for_date(date)  # This should return a dictionary structured like your JSON
+    return render_template('flights.html', date=date, flight_info=flight_info)
+
 
 @app.route('/logout')
 def logout():
