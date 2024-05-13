@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flights on {{ date }}</title>
+  </head>
+  <body>
+    <h1>Flights on {{ date }}</h1>
+    {% if flight_info %}
+    <ul>
+      {% for flight in flight_info %}
+      <li>
+        Flight Number: {{ flight.flight_number }}, Destination: {{
+        flight.destination }}, Time: {{ flight.time }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No flights available for this date.</p>
+    {% endif %}
+    <a href="/">Back</a>
+    <a href="/logout">Logout</a>
+  </body>
+</html>
