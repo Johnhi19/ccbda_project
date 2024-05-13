@@ -1,14 +1,74 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Login</title>
-  </head>
-  <body>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Changed to Inter to match the font link */
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background: white;
+            font-size: small;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 6px;
+        }
+
+        input[type="submit"] {
+            background-color: #031DFF;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3B4DF3;
+        }
+
+        label {
+            color: #00000050
+        }
+
+        a {
+            color: #031DFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
     <form action="" method="post">
-      Username: <input type="text" name="username" /><br />
-      Password: <input type="password" name="password" /><br />
-      <input type="submit" value="Login" />
+        <label for="username">Username</label> <input type="text" id="username" name="username" /><br />
+        <label for="password">Password</label> <input type="password" id="password" name="password" /><br />
+        <input type="submit" value="Login" />
     </form>
     <p>Don't have an account? <a href="/register">Register here</a></p>
-  </body>
+</body>
 </html>
