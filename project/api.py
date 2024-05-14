@@ -1,53 +1,65 @@
 import requests
-import argparse
-import json  # Import json for file operations
-
-# Set up the argument parser
-parser = argparse.ArgumentParser(description='Search for flights using the Sky Scrapper API.')
-parser.add_argument('--originSkyId', default='LOND', type=str, required=False, help='Sky ID for the origin location.')
-parser.add_argument('--destinationSkyId', default='NYCA', type=str, required=False, help='Sky ID for the destination location.')
-parser.add_argument('--originEntityId', default='27544008', type=str, required=False, help='Entity ID for the origin location.')
-parser.add_argument('--destinationEntityId', default='27537542', type=str, required=False, help='Entity ID for the destination location.')
-parser.add_argument('--date', type=str, required=True, help='Date for the flight search (YYYY-MM-DD).')
-parser.add_argument('--adults', type=str, default='1', help='Number of adults.')
-parser.add_argument('--currency', type=str, default='USD', help='Currency to display prices in.')
-parser.add_argument('--market', type=str, default='en-US', help='Market language for results.')
-parser.add_argument('--countryCode', type=str, default='US', help='Country code.')
-
-# Parse the arguments
-args = parser.parse_args()
+import json 
 
 # API endpoint
 url = "https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchFlights"
+urlAirports = "https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchAirport"
 
-# Prepare the querystring using the parsed arguments
-querystring = {
-    "originSkyId": args.originSkyId,
-    "destinationSkyId": args.destinationSkyId,
-    "originEntityId": args.originEntityId,
-    "destinationEntityId": args.destinationEntityId,
-    "date": args.date,
-    "adults": args.adults,
-    "currency": args.currency,
-    "market": args.market,
-    "countryCode": args.countryCode
-}
+def get_airport(headers, location):
+    querystring = {"query": location}
+    response = requests.get(urlAirports, headers=headers, params=querystring)
+    data = response.json()
+    entityId = data["data"][0]["entityId"]
+    skyId = data["data"][0]["skyId"]
+    return entityId, skyId
 
-# Headers for the request
-headers = {
+def get_flights(headers, originSkyId, destinationSkyId, originEntityId, destinationEntityId, date):
+    querystring = {
+        "originSkyId": originSkyId,
+        "destinationSkyId": destinationSkyId,
+        "originEntityId": originEntityId,
+        "destinationEntityId": destinationEntityId,
+        "date": date
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    data = response.json()
+    return data
+
+def extract_flight_info(data):
+    final_data = {}
+    # final_data["totalResults"] = data["data"]["context"]["totalResults"] 
+    # final_data["status"] = data["data"]["context"]["status"]
+    flights = []
+    for flight in data["data"]["itineraries"]:
+        flight_data = {}
+        flight_data["price"] = flight["price"]["formatted"]
+        flight_data["origin"] = flight["legs"][0]["origin"]["name"] + " (" + flight["legs"][0]["origin"]["id"] + ")"
+        flight_data["destination"] = flight["legs"][0]["destination"]["name"] + " (" + flight["legs"][0]["destination"]["id"] + ")"
+        flight_data["departure"] = flight["legs"][0]["departure"]
+        flight_data["arrival"] = flight["legs"][0]["arrival"]
+        flight_data["duration"] = flight["legs"][0]["durationInMinutes"]
+        flight_data["stops"] = flight["legs"][0]["stopCount"]
+        flight_data["airline"] = flight["legs"][0]["carriers"]["marketing"][0]["name"]
+        flight_data["flightNumber"] = flight["legs"][0]["segments"][0]["flightNumber"]
+        flights.append(flight_data)
+    
+    final_data["flights"] = flights
+
+    with open('final_data.json', 'w') as f:
+        json.dump(final_data, f, indent=4) 
+
+
+def flights(origin, destination, date):
+    headers = {
     "X-RapidAPI-Key": "f27b563b20mshe084557d3a4279ep191acfjsn242aae6fe20b",
     "X-RapidAPI-Host": "sky-scrapper.p.rapidapi.com"
-}
+    }
+    
+    originEntityId, originSkyId = get_airport(headers, origin)
+    destinationEntityId, destinationSkyId = get_airport(headers, destination)
+    data = get_flights(headers, originSkyId, destinationSkyId, originEntityId, destinationEntityId, date)
+    extract_flight_info(data)
 
-# Send the GET request
-response = requests.get(url, headers=headers, params=querystring)
 
-# Get the JSON response data
-data = response.json()
 
-# Save the JSON data to a file
-with open('flight_results.json', 'w') as f:
-    json.dump(data, f, indent=4)  # Indent for pretty printing
-
-# Optionally, print the JSON data to the console
-print(data)
+#flights("London", "New York", "2024-07-04")

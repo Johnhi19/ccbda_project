@@ -13,21 +13,21 @@ def send_email_via_sns():
     )
     print(response)
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+application = Flask(__name__)
+application.secret_key = 'your_secret_key'
 
 # Initialize a DynamoDB client
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table = dynamodb.Table('Users')
 
-@app.route('/')
+@application.route('/')
 def home():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     else:
         return render_template('date_entry.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -41,7 +41,7 @@ def login():
             return 'Invalid Credentials'
     return render_template('login.html')
 
-@app.route('/register', methods=['GET', 'POST'])
+@application.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -56,7 +56,7 @@ def register():
             return 'Username already exists'
     return render_template('register.html')
 
-@app.route('/submit_date', methods=['POST'])
+@application.route('/submit_date', methods=['POST'])
 def submit_date():
     date = request.form['date']
     f = open('../flight_results.json')
@@ -66,10 +66,10 @@ def submit_date():
     return render_template('flights.html', date=date, flight_info=flight_info)
 
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
     session['logged_in'] = False
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    application.run(debug=True)
