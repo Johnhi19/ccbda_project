@@ -2,3 +2,4 @@ research/mynv/*
 __pycache__/*
 research/__pycache__/*
 project/__pycache__/*
+project/flask/__pycache__/*
