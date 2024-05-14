@@ -32,6 +32,7 @@ def extract_flight_info(data):
     flights = []
     for flight in data["data"]["itineraries"]:
         flight_data = {}
+        flight_data["id"] = flight["id"]
         flight_data["price"] = flight["price"]["formatted"]
         flight_data["origin"] = flight["legs"][0]["origin"]["name"] + " (" + flight["legs"][0]["origin"]["id"] + ")"
         flight_data["destination"] = flight["legs"][0]["destination"]["name"] + " (" + flight["legs"][0]["destination"]["id"] + ")"
@@ -40,13 +41,15 @@ def extract_flight_info(data):
         flight_data["duration"] = flight["legs"][0]["durationInMinutes"]
         flight_data["stops"] = flight["legs"][0]["stopCount"]
         flight_data["airline"] = flight["legs"][0]["carriers"]["marketing"][0]["name"]
+        flight_data["logoUrl"] = flight["legs"][0]["carriers"]["marketing"][0]["logoUrl"]
         flight_data["flightNumber"] = flight["legs"][0]["segments"][0]["flightNumber"]
         flights.append(flight_data)
     
     final_data["flights"] = flights
 
-    with open('final_data.json', 'w') as f:
-        json.dump(final_data, f, indent=4) 
+    return final_data
+    # with open('final_data.json', 'w') as f:
+    #     json.dump(final_data, f, indent=4) 
 
 
 def flights(origin, destination, date):
@@ -58,7 +61,8 @@ def flights(origin, destination, date):
     originEntityId, originSkyId = get_airport(headers, origin)
     destinationEntityId, destinationSkyId = get_airport(headers, destination)
     data = get_flights(headers, originSkyId, destinationSkyId, originEntityId, destinationEntityId, date)
-    extract_flight_info(data)
+    final_data = extract_flight_info(data)
+    return final_data
 
 
 
