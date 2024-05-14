@@ -27,8 +27,8 @@ def get_flights(headers, originSkyId, destinationSkyId, originEntityId, destinat
 
 def extract_flight_info(data):
     final_data = {}
-    final_data["totalResults"] = data["data"]["context"]["totalResults"] 
-    final_data["status"] = data["data"]["context"]["status"]
+    # final_data["totalResults"] = data["data"]["context"]["totalResults"] 
+    # final_data["status"] = data["data"]["context"]["status"]
     flights = []
     for flight in data["data"]["itineraries"]:
         flight_data = {}
@@ -62,4 +62,4 @@ def flights(origin, destination, date):
 
 
 
-flights("London", "New York", "2024-07-04")
+#flights("London", "New York", "2024-07-04")
