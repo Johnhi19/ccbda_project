@@ -1,40 +1,283 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Flight Information</title>
-  </head>
-  <body>
-    <h1>Flight Details for the Flight from {{origin}} to {{destination}} on {{ date }}</h1>
-    {% if flight_info %}
-    <div>
-      <p>Total Results: {{ flight_info.flights|length }}</p>
-      {% for flight in flight_info.flights %}
-      <div>
-        <h2>Flight ID: {{ flight.id }}</h2>
-        <p>Price: {{ flight.price }}</p>
-        <div>
-          <div>
-            <p>
-              From {{ flight.origin }} to {{ flight.destination }}
-            </p>
-            <p>Departure: {{ flight.departure }}</p>
-            <p>Arrival: {{ flight.arrival }}</p>
-            <p>Duration: {{ flight.duration }} minutes</p>
-            <p>Stops: {{ flight.stop }}</p>
-            <p>Airline: </p>
-            <p>
-              {{ flight.airline }} -
-              <img src="{{ flight.logoUrl }}" alt="Airline Logo" />
-            </p>
-          </div>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: #ffffff;
+            color: #333;
+            text-align: center;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content {
+            padding-top: 70px; /* space for the header */
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .flight-container {
+            margin-bottom: 20px;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .flight-card {
+            display: flex;
+            align-items: flex-start;
+            flex: 1 0 0;
+            border-radius: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.0);
+            background: #FFF;
+            margin-top: 12px;
+            will-change: box-box-shadow;
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, scale 0.3s ease-out;
+            cursor: pointer;
+        }
+
+        .flight-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .left-container {
+            display: flex;
+            padding: 20px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            flex: 1 0 0;
+            align-self: stretch;
+        }
+
+        .airline-header {
+            display: flex;
+            padding: 4px;
+            align-items: flex-start;
+            gap: 4px;
+            align-self: stretch;
+            align-items: center;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            align-self: stretch;
+        }
+
+        .timebox {
+            display: flex;
+            padding: 8px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .flight-info {
+            display: flex;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1 0 0;
+        }
+
+        .airport-ids {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            align-self: stretch;
+            gap: 8px;
+        }
+
+        .separator {
+            display: flex;
+            width: 1px;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: stretch;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .right-container {
+            display: flex;
+            width: 100px;
+            padding: 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            align-self: stretch;
+        }
+
+        .button {
+            display: flex;
+            height: 40px;
+            justify-content: center;
+            align-items: center;
+            align-self: stretch;
+            border-radius: 20px;
+            background: #031DFF;
+            color: #fff;
+            font-size: normal;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            line-height: 1;
+        }
+
+        img.airline-logo {
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .text-price {
+            color: #000;
+            font-size: x-large;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .text-primary {
+            color: #000;
+            font-size: xx-large;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .text-deafult {
+            color: #00000050;
+            font-size: small;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .text-accent {
+            color: #031DFF;
+            font-size: small;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-self: stretch;
+        }
+
+        .dot {
+            width: 5px;
+            height: 5px;
+            background-color: rgba(0, 0, 0, 0.08);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hline {
+            display: flex;
+            width: 100%;
+            height: 1px;
+            margin: 2px 0px;
+            flex-direction: row;
+            align-items: flex-start;
+            align-self: stretch;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/">Back</a>
+        <h1>Flights</h1>
+        <a href="/logout">Logout</a>
+    </header>
+    <div class="content">
+        {% if flight_info %}
+        <div class="flight-container">
+            <p class="text-deafult">Total Results: {{ flight_info.flights|length }}</p>
+            {% for flight in flight_info.flights %}
+            <div class="flight-card">
+                <div class="left-container">
+                    <div class="airline-header">
+                        <img class="airline-logo" src="{{ flight.logoUrl }}" alt="Airline Logo" />
+                        <span class="text-deafult">{{ flight.airline }}</span>
+                    </div>
+                    <div class="details">
+                        <div class="timebox">
+                            <p class="text-primary">{{ flight.departure_time }}</p>
+                            <p class="text-deafult">{{ flight.origin_name }}</p>
+                            <p class="text-deafult">{{ flight.departure_date }}</p>
+                        </div>
+                        <div class="flight-info">
+                            <p class="text-deafult">Duration: {{ flight.duration }}</p>
+                            <div class="timeline">
+                                <div class="dot"></div>
+                                <div class="hline"></div>
+                                <div class="dot"></div>
+                            </div>
+                            <div class="airport-ids">
+                                <p class="text-accent">{{ flight.origin_id }}</p>
+                                <p class="text-deafult">stops: {{ flight.stops }}</p>
+                                <p class="text-accent">{{ flight.destination_id }}</p>
+                            </div>
+                        </div>
+                        <div class="timebox">
+                            <p class="text-primary">{{ flight.arrival_time }}</p>
+                            <p class="text-deafult">{{ flight.destination_name }}</p>
+                            <p class="text-deafult">{{ flight.arrival_date }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator"></div>
+                <div class="right-container">
+                    <p class="text-price">{{ flight.price }}</p>
+                    <div class="button">book</div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-      </div>
-      {% endfor %}
+        {% else %}
+        <p>No flight information available for the origin, destination and date provided.</p>
+        {% endif %}
     </div>
-    {% else %}
-    <p>No flight information available for the origin, destination and date.</p>
-    {% endif %}
-    <a href="/">Back</a>
-    <a href="/logout">Logout</a>
-  </body>
+</body>
 </html>

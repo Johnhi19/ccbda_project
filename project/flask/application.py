@@ -5,7 +5,7 @@ from api import flights
 
 def send_email_via_sns():
     sns = boto3.client('sns', region_name='us-east-1')
-    topic_arn = 'arn:aws:sns:us-east-1:637423189033:new_user'
+    topic_arn = 'arn:aws:sns:us-east-1:533267200697:new_user'
     
     response = sns.publish(
         TopicArn=topic_arn,
