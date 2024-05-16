@@ -1,5 +1,6 @@
 import requests
-import json 
+import json
+from datetime import datetime
 
 # API endpoint
 url = "https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchFlights"
@@ -25,6 +26,12 @@ def get_flights(headers, originSkyId, destinationSkyId, originEntityId, destinat
     data = response.json()
     return data
 
+def parse_date_time(datetime_str):
+    dt = datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S')
+    date = dt.strftime('%a, %d %B')
+    time = dt.strftime('%H:%M')
+    return date, time
+
 def extract_flight_info(data):
     final_data = {}
     # final_data["totalResults"] = data["data"]["context"]["totalResults"] 
@@ -43,9 +50,20 @@ def extract_flight_info(data):
         flight_data["airline"] = flight["legs"][0]["carriers"]["marketing"][0]["name"]
         flight_data["logoUrl"] = flight["legs"][0]["carriers"]["marketing"][0]["logoUrl"]
         flight_data["flightNumber"] = flight["legs"][0]["segments"][0]["flightNumber"]
+
+        # ui
+        flight_data["origin_name"] = flight["legs"][0]["origin"]["name"]
+        flight_data["origin_id"] = flight["legs"][0]["origin"]["id"]
+        flight_data["destination_name"] = flight["legs"][0]["destination"]["name"]
+        flight_data["destination_id"] = flight["legs"][0]["destination"]["id"]
+
+        flight_data["departure_date"], flight_data["departure_time"] = parse_date_time(flight["legs"][0]["departure"])
+        flight_data["arrival_date"], flight_data["arrival_time"] = parse_date_time(flight["legs"][0]["arrival"])
+
         flights.append(flight_data)
     
     final_data["flights"] = flights
+    print()
 
     return final_data
     # with open('final_data.json', 'w') as f:
@@ -54,8 +72,8 @@ def extract_flight_info(data):
 
 def flights(origin, destination, date):
     headers = {
-    "X-RapidAPI-Key": "f27b563b20mshe084557d3a4279ep191acfjsn242aae6fe20b",
-    "X-RapidAPI-Host": "sky-scrapper.p.rapidapi.com"
+        "X-RapidAPI-Key": "f27b563b20mshe084557d3a4279ep191acfjsn242aae6fe20b",
+        "X-RapidAPI-Host": "sky-scrapper.p.rapidapi.com"
     }
     
     originEntityId, originSkyId = get_airport(headers, origin)
