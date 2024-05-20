@@ -5,7 +5,7 @@ from api import flights
 
 def send_email_via_sns():
     sns = boto3.client('sns', region_name='us-east-1')
-    topic_arn = 'arn:aws:sns:us-east-1:533267200697:new_user'
+    topic_arn = 'arn:aws:sns:us-east-1:058264326374:new_user'
     
     response = sns.publish(
         TopicArn=topic_arn,
@@ -14,12 +14,26 @@ def send_email_via_sns():
     )
     print(response)
 
+def upload_to_s3(data, bucket_name, filename):
+    s3.put_object(Bucket=bucket_name, Key=filename, Body=json.dumps(data))
+
+def fetch_from_s3(bucket_name, filename):
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=filename)
+        data = response['Body'].read().decode('utf-8')
+        return json.loads(data)
+    except s3.exceptions.NoSuchKey:
+        return None
+
 application = Flask(__name__)
 application.secret_key = 'your_secret_key'
 
 # Initialize a DynamoDB client
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table = dynamodb.Table('Users')
+
+# Initialize AWS S3
+s3 = boto3.client('s3', region_name='us-east-1')
 
 @application.route('/')
 def home():
@@ -62,9 +76,18 @@ def get_flights():
     origin = request.form['origin']
     destination = request.form['destination']
     date = request.form['date']
-    
-    flight_info = flights(origin, destination, date)
-    #flight_info = fetch_flights_for_date(date)  # This should return a dictionary structured like your JSON
+
+    s3_origin = origin.lower().replace(' ', '_')
+    s3_destination = destination.lower().replace(' ', '_')
+    s3_date = date.replace('/', '').replace('-', '')
+    filename = f"{s3_origin}_{s3_destination}_{s3_date}.json"
+    bucket_name = 'ccbda'
+
+    flight_info = fetch_from_s3(bucket_name, filename)
+    if not flight_info:
+        flight_info = flights(origin, destination, date)
+        upload_to_s3(flight_info, bucket_name, filename)
+
     return render_template('flights.html', date=date, flight_info=flight_info, origin=origin, destination=destination)
 
 
