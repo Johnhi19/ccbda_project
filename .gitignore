@@ -3,3 +3,5 @@ __pycache__/*
 research/__pycache__/*
 project/__pycache__/*
 project/flask/__pycache__/*
+project/flask/*.zip
+project/flask/venv/*
