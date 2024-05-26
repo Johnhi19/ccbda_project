@@ -8,8 +8,11 @@ urlAirports = "https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchAirport"
 
 def get_airport(headers, location):
     querystring = {"query": location}
-    response = requests.get(urlAirports, headers=headers, params=querystring)
-    data = response.json()
+    data = {}
+    while data == {}:
+        response = requests.get(urlAirports, headers=headers, params=querystring)
+        data = response.json()
+
     entityId = data["data"][0]["entityId"]
     skyId = data["data"][0]["skyId"]
     return entityId, skyId
@@ -22,8 +25,12 @@ def get_flights(headers, originSkyId, destinationSkyId, originEntityId, destinat
         "destinationEntityId": destinationEntityId,
         "date": date
     }
-    response = requests.get(url, headers=headers, params=querystring)
-    data = response.json()
+
+    data = {}
+    while data == {}:
+        response = requests.get(url, headers=headers, params=querystring)
+        data = response.json()
+
     return data
 
 def parse_date_time(datetime_str):
